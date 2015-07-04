@@ -1,9 +1,17 @@
 <ion-view view-title="explore">
   <ion-content>
     <ion-list>
-    <ion-toggle  toggle-class="toggle-royal" ng-model="settings.enableFriends">
-        Enable Friends
+    <ion-toggle  toggle-class="toggle-royal" ng-class="{'item-royal': local}" ng-model="local">
+        Local animals only
     </ion-toggle>
+    <div class="card list" ng-repeat="n in [1,2,3,4,5]" ng-hide="n%2 != 0 && local == true">
+	  <div class="item royal">
+	    Super <span ng-if="n%2==0">local</span> emu
+	  </div>
+	  <div class="item item-image">
+	    <img src="img/emu.jpg">
+	  </div>
+	</div>
     </ion-list>
   </ion-content>
 </ion-view>
