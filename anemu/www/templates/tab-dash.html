@@ -1,0 +1,25 @@
+<ion-view view-title="anemu" class="dash" ng-class="{hidebg: currentPhoto.photo}">
+  <ion-content class="padding">
+    <div class="buttons" id="buttons" ng-hide="currentPhoto.photo">
+      <div style="height: 20px;"></div>
+      <button ng-click="getPhoto(1)" class="button button-block button-royal rounded icon-left ion-camera">Take Photo</button>
+      <button ng-click="getPhoto(0)" class="button button-block button-dark rounded icon-left ion-images">Open Gallery</button>
+    </div>
+    
+    <div class="list card" ng-show="currentPhoto.photo" ng-class="{shrunk: identifying}">
+
+      <div class="item item-dark item-button-right" ng-class="{hide: identifying}">
+        Your photo
+        <button class="button button-icon ion-close button-clear" ng-click="removePhoto()"></button>
+      </div>
+
+      <div class="item item-image">
+        <img id="currentPhoto" src="{{currentPhoto.photo}}">
+      </div>
+      <div class="item item-dark normal" ng-class="{hide: identifying}">Captured at: ({{currentPhoto.location.latitude}},{{currentPhoto.location.longtitude}})</div>
+
+    </div>
+
+    <button ng-click="identify()" ng-show="currentPhoto.photo" class="button button-block rounded icon-left ion-search" ng-class="{'button-royal': !identifying}">Identify<span ng-if="identifying">ing</span> this animal</button>
+  </ion-content>
+</ion-view>
