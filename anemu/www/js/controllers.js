@@ -119,7 +119,7 @@ angular.module('starter.controllers', [])
   // alert($scope.sighting);
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('AccountCtrl', function($scope, Chats) {
   $scope.settings = {
     enableFriends: true
   };

@@ -4,14 +4,14 @@
     <ion-toggle  toggle-class="toggle-royal" ng-class="{'item-royal': local}" ng-model="local">
         Local animals only
     </ion-toggle>
-    <div class="card list" ng-repeat="n in [1,2,3,4,5]" ng-hide="n%2 != 0 && local == true">
+    <a class="card list" ng-repeat="n in [1,2,3,4,5]" style="display: block; text-decoration: none;" ng-hide="n%2 != 0 && local == true" href="#/tab/account/Super_Emu">
 	  <div class="item royal">
 	    Super <span ng-if="n%2==0">local</span> emu
 	  </div>
 	  <div class="item item-image">
 	    <img src="img/emu.jpg">
 	  </div>
-	</div>
+	</a>
     </ion-list>
   </ion-content>
 </ion-view>
