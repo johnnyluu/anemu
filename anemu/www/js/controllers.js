@@ -119,8 +119,12 @@ angular.module('starter.controllers', [])
   // alert($scope.sighting);
 })
 
-.controller('AccountCtrl', function($scope, Chats) {
-  $scope.settings = {
-    enableFriends: true
-  };
+.controller('AccountCtrl', function($scope, Chats, $ionicScrollDelegate, $timeout) {
+  $scope.setting;
+  $scope.$watch('local',function(){
+    console.log('haha');
+    $timeout(function(){
+      $ionicScrollDelegate.resize();
+    })
+  })
 });

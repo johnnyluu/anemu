@@ -1,10 +1,10 @@
 <ion-view view-title="explore">
   <ion-content>
     <ion-list>
-    <ion-toggle  toggle-class="toggle-royal" ng-class="{'item-royal': local}" ng-model="local">
+    <ion-toggle  toggle-class="toggle-royal" ng-class="{'item-royal': setting.local}" ng-model="setting.local" ng-click="updateView()">
         Local animals only
     </ion-toggle>
-    <a class="card list" ng-repeat="n in [1,2,3,4,5]" style="display: block; text-decoration: none;" ng-hide="n%2 != 0 && local == true" href="#/tab/account/Super_Emu">
+    <a class="card list" ng-repeat="n in [1,2,3,4,5]" style="display: block; text-decoration: none;" ng-hide="n%2 != 0 && setting.local == true" href="#/tab/account/Super_Emu">
 	  <div class="item royal">
 	    Super <span ng-if="n%2==0">local</span> emu
 	  </div>
