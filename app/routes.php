@@ -16,13 +16,18 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::get('/butts', function(){
-	if(DB::connection()->getDatabaseName())
-	{
-	   return "conncted sucessfully to database ".DB::connection()->getDatabaseName();
-	}
+Route::get('/tree', 'AnimalController@treeTimeFunTime');
+Route::get('/animal/{id}', 'AnimalController@getBeastData');
+/*Route::get('/kingdoms', 'AnimalController@getKingdoms');
+Route::get('/phylums/{kingdom}', 'AnimalController@getPhylums');
+Route::get('/classes/{phylum}', 'AnimalController@getClasses');
+Route::get('/orders/{class}', 'AnimalController@getOrders');
+Route::get('/families/{order}', 'AnimalController@getFamilies');
+Route::get('/genuses/{family}', 'AnimalController@getGenuses');
+Route::get('/species/{genus}', 'AnimalController@getSpecies');
+Route::get('/images', 'AnimalController@findPhotos');
+Route::get('/all', 'AnimalController@ALLOFIT');*/
 
-	return "I dunno";
-});
+
 
 
