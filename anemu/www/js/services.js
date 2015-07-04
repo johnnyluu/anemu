@@ -56,7 +56,6 @@ angular.module('starter.services', [])
   return {
     getPicture: function(options) {
       var q = $q.defer();
-
       navigator.camera.getPicture(function(result) {
         // Do any magic you need
 
@@ -80,7 +79,7 @@ angular.module('starter.services', [])
 
       navigator.geolocation.getCurrentPosition(function(result){
         // console.log('result');
-        console.log("result" + JSON.stringify(result));
+        // console.log("result" + JSON.stringify(result));
         callback(result);
         
       }, function(err){

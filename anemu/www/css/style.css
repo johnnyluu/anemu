@@ -19,20 +19,58 @@
   font-family: Montserrat, Helvetica, sans-serif;
   font-weight: bold;
 }
+.mont{
+  font-family: Montserrat, Helvetica, sans-serif;
+  font-weight: bold;
+
+}
 
 .card .item.normal{
 	font-weight: normal;
 }
 .card{
-	/*-webkit-transition: .5s all ease;
-	transition: .5s all ease;*/
+	-webkit-transition: .5s all ease;
+	transition: .5s all ease;
 	border-radius: 24px;
-	/*max-height: 2000px;*/
+	max-height: 350px;
+	overflow: hidden;
 }
+
+/*.card .scroller{
+	height: 200px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+	-webkit-overflow-scrolling: touch;
+}*/
+
 .card.shrunk{
-	max-height: 200px;
+	max-height: 180px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.scroll{
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
+.wrapper{
+	/*position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;*/
+	white-space: nowrap;
+	overflow-y: hidden;
+	overflow-x: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
+.wrapper .option{
+	display: inline-block;
+	margin-right: 10px;
+}
+.wrapper .option img{
+	height: 140px;
 }
 .dash ion-content{
 	background: url('../img/bg.jpg') no-repeat center bottom;
@@ -40,4 +78,39 @@
 }
 .dash.hidebg ion-content{
 	background: #F9F7F8;
+}
+
+.details .imageDiv{
+	width: 100%;
+	height: 310px;
+	position: fixed;
+	top: 44px;
+	left: 0;
+	z-index: 1;
+	background-size: cover;
+}
+.details2 .imageDiv{
+	width: 100%;
+	height: 310px;
+	position: fixed;
+	top: 94px;
+	left: 0;
+	z-index: 1;
+	background-size: cover;
+}
+.details .imageDiv img, .details2 .imageDiv img{
+	height: 100%;
+	width: auto;
+}
+.details .list, .details2 .list{
+	/*padding-top: 310px;*/
+	position: relative;
+	z-index: 100;
+	height: 100%;
+}
+.details .ion-chevron-down, .details2 .ion-chevron-down{
+	opacity: .3;
+}
+.details .item.mont, .details2 .item.mont{
+	text-align: center;
 }

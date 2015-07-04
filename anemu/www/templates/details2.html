@@ -1,0 +1,38 @@
+<ion-modal-view class="details">
+	<ion-header-bar class="bar-royal">
+	  <h1 class="title">{{number}}</h1>
+	  <button class="button button-icon ion-close" ng-click="closeModal()"></button>
+	</ion-header-bar>
+	<ion-content scroll="false">
+	<div class="imageDiv" style="background: url('../img/emu.jpg') no-repeat center; background-size: cover;;"></div>
+		<ion-scroll class="list">
+		<div class="item" style="height:310px; background: transparent; border: none;">
+		</div>
+		<div class="item item-stable mont item-icon-left item-icon-right"><i class="icon ion-chevron-down"></i> <span class="royal">About {{number}}</span> <i class="icon ion-chevron-down"></i></div>
+		<div class="item item-dark item-divider">Classification</div>
+	  	<div class="row item padding">
+	  		<div class="col">
+	  			<h2>Class</h2>
+	  			<p>Brahahaha</p>
+	  		</div>
+	  		<div class="col">
+	  			<h2>Genus</h2>
+	  			<p>Brahahaha</p>
+	  		</div>
+	  	</div>
+	  	<div class="item item-dark item-divider">Specie spoting</div>
+	  	<div class="item"></div>
+	  	<div class="item item-dark item-divider">Lastest sighting</div>
+	  	<div class="item item-avatar">
+	  		<img src="img/icon.png" />
+	  		<h2>User name</h2>
+	  		<p>2012 Jun 14 in Brisbane</p>
+	  	</div>
+	  	<div class="item item-dark item-divider">Stories</div>
+	  	<div class="item"></div>
+	  	<div class="item item-dark item-divider">Dreamtime</div>
+	  	<div class="item"></div>
+	  	<div class="item item-stable">data source: </div>
+	  </ion-scroll>
+	</ion-content>
+</ion-modal-view>
