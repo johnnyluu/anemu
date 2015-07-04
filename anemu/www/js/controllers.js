@@ -122,7 +122,7 @@ angular.module('starter.controllers', [])
 .controller('AccountCtrl', function($scope, Chats, $ionicScrollDelegate, $timeout) {
   $scope.setting;
   $scope.$watch('local',function(){
-    console.log('haha');
+    // console.log('haha');
     $timeout(function(){
       $ionicScrollDelegate.resize();
     })
