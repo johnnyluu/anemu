@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Camera, $timeout, $ionicScrollDelegate, $ionicModal, $ionicLoading) {
+.controller('DashCtrl', function($scope, $http, Camera, $timeout, $ionicScrollDelegate, $ionicModal, $ionicLoading) {
   $scope.currentPhoto = {photo: "", location: {}};
   $scope.identifying = false;
 
@@ -10,23 +10,51 @@ angular.module('starter.controllers', [])
   }).then(function(modal) {
     $scope.modal = modal;
   });
-  $scope.openDetails = function(n) {
+  $scope.animalNode = {};
+  $scope.animalInfo = {};
+  $scope.openDetails = function(animalNode) {
     $scope.modal.show();
-    $scope.number = n;
+    $scope.animalNode = animalNode;
+    $http.get('http://teardesign.com/anemu/anemu/public/animal/'+$scope.animalNode.imageID).success(function(data) 
+    {
+        console.log(data);
+         $scope.animalInfo = angular.copy(data);
+    });
   };
   $scope.closeModal = function() {
     $scope.modal.hide();
+    $scope.animalInfo = {};
   };
+  $scope.startOver = function(){
+    $scope.closeModal();
+    $scope.closeIdentify();
+
+  }
   $scope.loading = function() {
     $ionicLoading.show({
       template: '<ion-spinner class="spinner-energized"></ion-spinner><br/>Loading...'
     });
   };
   $scope.upload = function(){
+    
     $scope.loading();
-    $timeout(function(){
-      $scope.doneLoading();
-    }, 1000);
+    var sightings = window.localStorage['sightings'] || '{"sightings":[]}';
+    var mySightings = JSON.parse(sightings);
+    var currentDate = new Date();
+    mySightings.sightings.unshift([$scope.animalNode.imageID, currentDate])
+    var mySave = JSON.stringify(mySightings);
+    window.localStorage['sightings'] = mySave;
+    navigator.geolocation.getCurrentPosition(function(position) {
+      
+
+    $http.get('http://teardesign.com/anemu/anemu/public/sighting?id='+$scope.animalNode.imageID+'&lat='+position.coords.latitude+'&lon='+position.coords.longitude+'&username=Anemu User').success(function(){
+      $timeout(function(){
+        $scope.doneLoading();
+      }, 1000);
+    });
+
+  });
+
   }
   $scope.doneLoading = function(){
     $ionicLoading.hide();
@@ -58,8 +86,8 @@ angular.module('starter.controllers', [])
     //       'Speed: '             + position.coords.speed             + '\n' +
     //       'Timestamp: '         + position.timestamp                + '\n');
     // };
-      $scope.currentPhoto.location.latitude = position.coords.latitude;
-      $scope.currentPhoto.location.longtitude = position.coords.longitude;
+    // $scope.currentPhoto.location.latitude = position.coords.latitude;
+    // $scope.currentPhoto.location.longtitude = position.coords.longitude;
     };
 
     // onError Callback receives a PositionError object
@@ -74,18 +102,41 @@ angular.module('starter.controllers', [])
 
   $scope.identify = function(){
     $scope.identifying = !$scope.identifying;
-    // $timeout(function(){
-      // alert($ionicScrollDelegate.scrollTop);
       $ionicScrollDelegate.scrollTop();
-    // }, 500)
+  }
+
+  $scope.closeIdentify = function(){
+    $scope.identifying = false;
+    $scope.initTree();
   }
 
   $scope.removePhoto = function(){
     $scope.currentPhoto = {};
   }
+
+  $scope.initTree = function(){
+    $scope.animalTree = [];
+    $http.get('http://teardesign.com/anemu/anemu/public/tree').success(function(data) 
+    {
+        console.log(data);
+         $scope.animalTree = angular.copy(data);
+    });
+  }
+
+  $scope.initTree();
+  
+
+  $scope.getNextNodes = function(animalNode) 
+  {
+      if (animalNode.children)
+        $scope.animalTree = angular.copy(animalNode.children);
+      else
+        $scope.openDetails(animalNode)
+  };
+
 })
 
-.controller('ChatsCtrl', function($scope, Chats, $ionicModal) {
+.controller('ChatsCtrl', function($scope, Chats, $ionicModal, $http) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -93,16 +144,38 @@ angular.module('starter.controllers', [])
   //
   //$scope.$on('$ionicView.enter', function(e) {
   //});
-  $scope.sightings = ['Big emu', 'Little emu', 'Emu king']
+  
+    var sightings = window.localStorage['sightings'] || '{sightings:[]}';
+    var mySightings = JSON.parse(sightings);
+  $scope.sightings = mySightings.sightings;
   $ionicModal.fromTemplateUrl('templates/details2.html', {
     scope: $scope,
     animation: 'slide-in-up'
   }).then(function(modal) {
     $scope.modal2 = modal;
   });
-  $scope.openDetails = function(n) {
+  $scope.initTree = function(){
+    $scope.animalTree = [];
+    $http.get('http://teardesign.com/anemu/anemu/public/tree').success(function(data) 
+    {
+        console.log(data);
+         $scope.animalTree = angular.copy(data);
+    });
+  }
+
+  $scope.initTree();
+  
+
+  $scope.getNextNodes = function(animalNode) 
+  {
+      if (animalNode.children)
+        $scope.animalTree = angular.copy(animalNode.children);
+      else
+        $scope.openDetails(animalNode)
+  };
+  $scope.openDetails = function(animalNode) {
     $scope.modal2.show();
-    $scope.number = n;
+    $scope.animal = animalNode;
   };
   $scope.closeModal = function() {
     $scope.modal2.hide();
@@ -119,7 +192,7 @@ angular.module('starter.controllers', [])
   // alert($scope.sighting);
 })
 
-.controller('AccountCtrl', function($scope, Chats, $ionicScrollDelegate, $timeout) {
+.controller('AccountCtrl', function($scope, Chats, $ionicScrollDelegate, $timeout, $http) {
   $scope.setting;
   $scope.$watch('local',function(){
     // console.log('haha');
@@ -127,4 +200,23 @@ angular.module('starter.controllers', [])
       $ionicScrollDelegate.resize();
     })
   })
+  $scope.initTree = function(){
+    $scope.animalTree = [];
+    $http.get('http://teardesign.com/anemu/anemu/public/tree').success(function(data) 
+    {
+        console.log(data);
+         $scope.animalTree = angular.copy(data);
+    });
+  }
+
+  $scope.initTree();
+  
+
+  $scope.getNextNodes = function(animalNode) 
+  {
+      if (animalNode.children)
+        $scope.animalTree = angular.copy(animalNode.children);
+      else
+        $scope.openDetails(animalNode)
+  };
 });
