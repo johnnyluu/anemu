@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Camera, $timeout, $ionicScrollDelegate, $ionicModal, $ionicLoading) {
+.controller('DashCtrl', function($scope, $http, Camera, $timeout, $ionicScrollDelegate, $ionicModal, $ionicLoading) {
   $scope.currentPhoto = {photo: "", location: {}};
   $scope.identifying = false;
 
@@ -58,8 +58,8 @@ angular.module('starter.controllers', [])
     //       'Speed: '             + position.coords.speed             + '\n' +
     //       'Timestamp: '         + position.timestamp                + '\n');
     // };
-      $scope.currentPhoto.location.latitude = position.coords.latitude;
-      $scope.currentPhoto.location.longtitude = position.coords.longitude;
+      // $scope.currentPhoto.location.latitude = position.coords.latitude;
+      // $scope.currentPhoto.location.longtitude = position.coords.longitude;
     };
 
     // onError Callback receives a PositionError object
@@ -83,6 +83,16 @@ angular.module('starter.controllers', [])
   $scope.removePhoto = function(){
     $scope.currentPhoto = {};
   }
+
+
+  $scope.animalTree = [];
+  $http.get('http://teardesign.com/anemu/anemu/public/tree').success(function(data) 
+  {
+      alert(data.length);
+      console.log(data);
+       $scope.animalTree = angular.copy(data);
+  });
+
 })
 
 .controller('ChatsCtrl', function($scope, Chats, $ionicModal) {

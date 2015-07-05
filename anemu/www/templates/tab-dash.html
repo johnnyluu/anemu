@@ -1,5 +1,6 @@
 <ion-view view-title="anemu" class="dash" ng-class="{hidebg: currentPhoto.photo}">
   <ion-content class="padding" id="dashcontent" scroll="false">
+
     <div class="buttons" id="buttons" ng-hide="currentPhoto.photo">
       <div style="height: 20px;"></div>
       <button ng-click="getPhoto(1)" class="button button-block button-royal rounded icon-left ion-camera">Take Photo</button>
@@ -28,8 +29,8 @@
       </div>
 
       <div class="item wrapper item-dark">
-        <div class="option" ng-repeat="n in [1,2,3,4,5,6,7,8,9]" ng-click="openDetails(n)">
-          <img src="{{currentPhoto.photo}}">
+        <div class="option" ng-repeat="animalClass in animalTree" ng-click="openDetails(animalClass)">
+          <img src="{{animalClass.image}}">
         </div>
       </div>
 
