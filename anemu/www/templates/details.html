@@ -1,40 +1,57 @@
 <ion-modal-view class="details">
 	<ion-header-bar class="bar-royal">
-	  <h1 class="title">{{number}}</h1>
+	  <h1 class="title">{{ animalNode.imageName }}</h1>
 	  <button class="button button-icon ion-close" ng-click="closeModal()"></button>
 	</ion-header-bar>
 	<ion-content scroll="false">
-	<div class="imageDiv item item-image" style="background: url('{{currentPhoto.photo}}') no-repeat center; background-size: cover;"></div>
+	<div class="imageDiv item item-image" style="background: url('{{ animalNode.image }}') no-repeat center; background-size: cover;"></div>
 		<ion-scroll class="list">
 		<div class="item" style="height:310px; background: transparent; border: none;">
 		</div>
 		<div class="item">
 			<button class="button button-block rounded button-royal" ng-click="upload()">This is it!</button>
-			<button class="button button-block rounded button-dark">Find similar animals</button>
+			<button class="button button-block rounded button-dark" ng-click="startOver()">Start over</button>
 		</div>
-		<div class="item item-stable mont item-icon-left item-icon-right"><i class="icon ion-chevron-down"></i> <span class="royal">About {{number}}</span> <i class="icon ion-chevron-down"></i></div>
+		<div class="item item-stable mont item-icon-left item-icon-right"><i class="icon ion-chevron-down"></i> <span class="royal">About {{ animalNode.imageName }}</span> <i class="icon ion-chevron-down"></i></div>
 		<div class="item item-dark item-divider">Classification</div>
 	  	<div class="row item padding">
 	  		<div class="col">
 	  			<h2>Class</h2>
-	  			<p>Brahahaha</p>
+	  			<p>{{ animalNode.ClassName }}</p>
 	  		</div>
 	  		<div class="col">
-	  			<h2>Genus</h2>
-	  			<p>Brahahaha</p>
+	  			<h2>Family</h2>
+	  			<p>{{ animalNode.FamilyName }}</p>
+	  		</div>
+	  		<div class="col">
+	  			<h2>Species</h2>
+	  			<p>{{ animalNode.imageName }}</p>
 	  		</div>
 	  	</div>
-	  	<div class="item item-dark item-divider">Latest sighting</div>
+	  	<div class="item item-dark item-divider">Scientific name</div>
+	  	<div class="item">
+	  		<h2 ng-if="!animalInfo.info">Loading</h2>
+	  		<p ng-if="!animalInfo.info"><ion-spinner icon="dots"></ion-spinner></p>
+	  		<span ng-show="animalInfo.info">{{animalInfo.info.ScientificName}}</span>
+	  		</div>
+	  	<div class="item item-dark item-divider">
+	  		Latest sighting
+  		</div>
 	  	<div class="item item-avatar">
 	  		<img src="img/icon.png" />
-	  		<h2>User name</h2>
-	  		<p>2012 Jun 14 in Brisbane</p>
+	  		<h2 ng-if="!animalInfo.sighting">Loading</h2>
+	  		<p ng-if="!animalInfo.sighting"><ion-spinner icon="dots"></ion-spinner></p>
+	  		<h2 ng-show="animalInfo.sighting">{{animalInfo.sighting.name}}</h2>
+	  		<p>{{animalInfo.sighting.date}} {{animalInfo.sighting.lat}}</p>
 	  	</div>
-	  	<div class="item item-dark item-divider">Stories</div>
-	  	<div class="item"></div>
-	  	<div class="item item-dark item-divider">Dreamtime</div>
-	  	<div class="item"></div>
-	  	<div class="item item-stable">data source: </div>
+	  	<div class="item item-image" ng-show="animalInfo.sighting">
+	  		<img src="https://maps.googleapis.com/maps/api/staticmap?center={{animalInfo.sighting.latitude}},{{animalInfo.sighting.longitude}}&zoom=10&markers={{animalInfo.sighting.latitude}},{{animalInfo.sighting.longitude}}&size=600x200" >
+	  	</div>
+	  	<div class="item item-dark item-divider" ng-show="animalInfo.stories">Stories</div>
+	  	<div class="item" ng-repeat="story in animalInfo.stories" ng-show="animalInfo.stories">
+	  		<a href="{{story.URL}}" target="_blank">{{story.Title}}</a><!--  - {{story.URL}} -->
+	  	</div>
+	  	<div class="item item-stable">data source: <span ng-if="animalInfo.stories"> ABC, </span><span ng-if="animalInfo.info"> Wildnet, </span><span ng-if="animalInfo.sighting"> Atlas of Living Australia </span></div>
 	  </ion-scroll>
 	</ion-content>
 </ion-modal-view>

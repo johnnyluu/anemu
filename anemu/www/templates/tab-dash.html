@@ -25,12 +25,12 @@
     <div class="list card identify" ng-cloak ng-show="identifying">
       <div class="item item-royal item-button-right">
         Select the most similar
-        <button class="button button-icon ion-close button-clear" ng-click="identify()"></button>
+        <button class="button button-icon ion-close button-clear" ng-click="closeIdentify()"></button>
       </div>
 
       <div class="item wrapper item-dark">
-        <div class="option" ng-repeat="animalClass in animalTree" ng-click="openDetails(animalClass)">
-          <img src="{{animalClass.image}}">
+        <div class="option" ng-repeat="animalNode in animalTree" ng-click="getNextNodes(animalNode)">
+          <img src="{{animalNode.image}}">
         </div>
       </div>
 

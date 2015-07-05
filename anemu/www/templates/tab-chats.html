@@ -2,11 +2,10 @@
   <ion-content>
     <ion-list>
       <!-- <ion-item class="item-remove-animate item-thumbnail-left item-icon-right" ng-repeat="sighting in sightings" type="item-text-wrap" href="#/tab/chats/{{sighting}}"> -->
-      <ion-item class="item-remove-animate item-thumbnail-left item-icon-right" ng-repeat="sighting in sightings" type="item-text-wrap" href="#/tab/chats/{{sighting}}">
-        <img ng-src="img/emu.jpg">
-        <h2 class="mont royal">Emu</h2>
-        <p class="mont">2014 Jun 5 14:33</p>
-        <p>Brisbane</p>
+      <ion-item class="item-remove-animate item-thumbnail-left item-icon-right" ng-repeat="sighting in sightings" type="item-text-wrap" href="#/tab/chats/{{sighting[0]}}">
+        <img ng-src="img/icon.png">
+        <h2 class="mont royal">{{sighting[0]}}</h2>
+        <p class="mont">{{sighting[1]}}</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 
         <ion-option-button class="button-assertive" ng-click="remove(sighting)">
