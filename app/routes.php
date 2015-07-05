@@ -18,6 +18,7 @@ Route::get('/', function()
 
 Route::get('/tree', 'AnimalController@treeTimeFunTime');
 Route::get('/animal/{id}', 'AnimalController@getBeastData');
+Route::get('/sighting', 'AnimalController@addSighting');
 /*Route::get('/kingdoms', 'AnimalController@getKingdoms');
 Route::get('/phylums/{kingdom}', 'AnimalController@getPhylums');
 Route::get('/classes/{phylum}', 'AnimalController@getClasses');

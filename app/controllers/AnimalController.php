@@ -127,11 +127,93 @@ class AnimalController extends Controller {
 
 	public function getBeastData($id){
 
+		$retArray = array();
 		if(Beast::where('TaxonID', '=', $id)->count() > 0){
-			return Beast::where('TaxonID', '=', $id)->first();
+
+			$beast = Beast::where('TaxonID', '=', $id)->first();
+			if(isset($beast->AcceptedCommonName)){
+
+				$beastName = '% '.$beast->AcceptedCommonName.' %';
+				$stories = Story::where(function ($query) use ($beastName){
+					$query->where('Subjects', 'like', $beastName)
+						  ->orWhere('Keywords', 'like', $beastName);
+				})->get();
+
+				$retArray[] = $stories;
+			}
+
+			$sightings = Sighting::where('TaxonID', '=', $id)
+			->orderBy('Date', 'DESC');
+
+			if($sightings->count() > 0){
+				$sighting = $sightings->first();
+				$retArray[] = array('longitude'=>$sighting->Longitude,
+					'latitude'=>$sighting->Latitude, 'date'=>$sighting->Date);
+			}
+
+			$retArray[] = $beast;
 		}
 
-		return array();
+		return $retArray;
+	}
+
+	public function addSighting(){
+		if(!Input::has('id') || !Input::has('lat') || !Input::has('lon')){
+			return "failure";
+		}
+
+		try{
+			$sighting = new Sighting;
+			$sighting->TaxonID = Input::get('id');
+			$sighting->Latitude = Input::get('lat');
+			$sighting->Longitude = Input::get('lon');
+			$sighting->Date = new DateTime();
+			$sighting->save();
+
+			return "success";
+		} catch(Exception $e){
+			return "failure";
+		}
+	}
+
+	public function getLatestAPISiting($speciesName){
+		try{
+			$speciesName = str_replace(' ', '%20', $speciesName);
+			$file =file_get_contents('http://environment.ehp.qld.gov.au/species/?op=getsurveysbyspecies&species=' . $speciesName);
+			$file = json_decode($file, true);
+
+
+			if(isset($file['features'])){
+
+				$maxDate;
+				$maxDateSet = false;
+				$coordinates;
+				foreach($file['features'] as $feature){
+
+					if(isset($feature['properties']['EndDate']) &&
+						isset($feature['geometry']['coordinates'])){
+
+						$date = $feature['properties']['EndDate'];
+						if(!$maxDateSet){
+							$maxDate = $date;
+							$coordinates = $feature['geometry']['coordinates'];
+							$maxDateSet = true;
+						}
+						else if($date > $maxDate){
+							$maxDate = $date;
+							$coordinates = $feature['geometry']['coordinates'];
+						}
+					}
+				}
+
+				return array($maxDate, $coordinates);
+			}
+
+			return array();
+		} catch (Exception $e){
+			//return array($e->getMess);
+			throw($e);
+		}
 	}
 
 	public function treeTimeFunTime(){
