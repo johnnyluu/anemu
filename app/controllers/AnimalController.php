@@ -133,13 +133,13 @@ class AnimalController extends Controller {
 			$beast = Beast::where('TaxonID', '=', $id)->first();
 			if(isset($beast->AcceptedCommonName)){
 
-				$beastName = '% '.$beast->AcceptedCommonName.' %';
+				$beastName = '%'.$beast->AcceptedCommonName.'%';
 				$stories = Story::where(function ($query) use ($beastName){
 					$query->where('Subjects', 'like', $beastName)
 						  ->orWhere('Keywords', 'like', $beastName);
 				})->get();
 
-				$retArray[] = $stories;
+				$retArray['stories'] = $stories;
 			}
 
 			$sightings = Sighting::where('TaxonID', '=', $id)
@@ -147,18 +147,54 @@ class AnimalController extends Controller {
 
 			if($sightings->count() > 0){
 				$sighting = $sightings->first();
-				$retArray[] = array('longitude'=>$sighting->Longitude,
-					'latitude'=>$sighting->Latitude, 'date'=>$sighting->Date);
+
+				if(isset($beast->ScientificName)){
+					$apiSighting = $this->getLatestAPISighting($beast->ScientificName);
+					if(count($apiSighting > 0) && $apiSighting[0] > $sighting->Date){
+						$retArray['sighting'] = array('longitude'=>$apiSighting[1][0],
+						'latitude'=>$apiSighting[1][1], 'date'=>$apiSighting[0],
+						'name'=>$apiSighting[2]);
+
+					}
+					else{
+						$retArray['sighting'] = array('longitude'=>$sighting->Longitude,
+						'latitude'=>$sighting->Latitude, 'date'=>$sighting->Date,
+						'name'=>$sighting->Username);
+					}
+				}
+				else{
+					$retArray['sighting'] = array('longitude'=>$sighting->Longitude,
+					'latitude'=>$sighting->Latitude, 'date'=>$sighting->Date,
+					'name'=>$sighting->Username);
+				}
+			}else{
+				if(isset($beast->ScientificName)){
+					$apiSighting = $this->getLatestAPISighting($beast->ScientificName);
+
+					if(count($apiSighting) > 0){
+						$retArray['sighting'] = array('longitude'=>$apiSighting[1][0],
+							'latitude'=>$apiSighting[1][1], 'date'=>$apiSighting[0],
+							'name'=>$apiSighting[2]);
+					}
+
+					else{
+						$retArray['sighting'] = array();
+					}
+				}
+				else{
+					$retArray['sighting'] = array();
+				}
 			}
 
-			$retArray[] = $beast;
+			$retArray['info'] = $beast;
 		}
 
 		return $retArray;
 	}
 
 	public function addSighting(){
-		if(!Input::has('id') || !Input::has('lat') || !Input::has('lon')){
+		if(!Input::has('id') || !Input::has('lat') || !Input::has('lon')
+			|| !Input::has('username')){
 			return "failure";
 		}
 
@@ -168,6 +204,8 @@ class AnimalController extends Controller {
 			$sighting->Latitude = Input::get('lat');
 			$sighting->Longitude = Input::get('lon');
 			$sighting->Date = new DateTime();
+			$sighting->Username = Input::get('username');
+
 			$sighting->save();
 
 			return "success";
@@ -176,7 +214,7 @@ class AnimalController extends Controller {
 		}
 	}
 
-	public function getLatestAPISiting($speciesName){
+	private function getLatestAPISighting($speciesName){
 		try{
 			$speciesName = str_replace(' ', '%20', $speciesName);
 			$file =file_get_contents('http://environment.ehp.qld.gov.au/species/?op=getsurveysbyspecies&species=' . $speciesName);
@@ -188,25 +226,29 @@ class AnimalController extends Controller {
 				$maxDate;
 				$maxDateSet = false;
 				$coordinates;
+				$name;
 				foreach($file['features'] as $feature){
 
 					if(isset($feature['properties']['EndDate']) &&
-						isset($feature['geometry']['coordinates'])){
+						isset($feature['geometry']['coordinates']) &&
+						isset($feature['properties']['OrganisationName'])){
 
 						$date = $feature['properties']['EndDate'];
 						if(!$maxDateSet){
 							$maxDate = $date;
 							$coordinates = $feature['geometry']['coordinates'];
+							$name = $feature['properties']['OrganisationName'];
 							$maxDateSet = true;
 						}
 						else if($date > $maxDate){
 							$maxDate = $date;
 							$coordinates = $feature['geometry']['coordinates'];
+							$name = $feature['properties']['OrganisationName'];
 						}
 					}
 				}
 
-				return array($maxDate, $coordinates);
+				return array($maxDate, $coordinates, $name);
 			}
 
 			return array();
@@ -232,12 +274,12 @@ class AnimalController extends Controller {
 
 
 			$classArray = array();
-			$classArray['children'] = array();
 			$classArray['type'] = 'Class';
 			$classArray['ClassName'] = $class->ClassName;
 			$classArray['image'] = $classBeast->image;
 			$classArray['imageName'] = isset($classBeast->AcceptedCommonName) ? $classBeast->AcceptedCommonName : $classBeast->ScientificName;
 			$classArray['imageID'] = $classBeast->TaxonID;
+			$classArray['children'] = array();
 
 			foreach(Beast::distinct()->select('FamilyName')
 				->where('ClassName', '=', $class->ClassName)->get() as $family){
@@ -253,12 +295,12 @@ class AnimalController extends Controller {
 
 
 				$familyArray = array();
-				$familyArray['children'] = array();
 				$familyArray['type'] = 'Family';
 				$familyArray['FamilyName'] = $family->FamilyName;
 				$familyArray['image'] = $familyBeast->image;
 				$familyArray['imageName'] = isset($familyBeast->AcceptedCommonName) ? $familyBeast->AcceptedCommonName : $familyBeast->ScientificName;
 				$familyArray['imageID'] = $familyBeast->TaxonID;
+				$familyArray['children'] = array();
 
 				foreach(Beast::where('image', '!=', '0')
 					->where('FamilyName', '=', $family->FamilyName)
@@ -266,6 +308,8 @@ class AnimalController extends Controller {
 
 					$beastArray = array();
 					$beastArray['image'] = $beast->image;
+					$beastArray['FamilyName'] = $family->FamilyName;
+					$beastArray['ClassName'] = $class->ClassName;
 					$beastArray['imageName'] = isset($beast->AcceptedCommonName) ? $beast->AcceptedCommonName : $beast->ScientificName;
 					$beastArray['imageID'] = $beast->TaxonID;
 
